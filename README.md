@@ -16,4 +16,6 @@ Office 2007或更高级版本
 复制DOC2PDF.vbs到文档目录或父目录，双击运行即可
 
 
-##TODO:加入GUI
+## 未来计划
+TODO: Fix BUG
+      加入GUI
