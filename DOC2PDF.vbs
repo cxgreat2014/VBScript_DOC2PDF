@@ -2,8 +2,8 @@ Dim fso
 Set fso = WScript.CreateObject("Scripting.Filesystemobject")
 Dim fld ' as object
 dim Path ' As string
-Path = fso.GetParentFolderName(WScript.ScriptFullName) '»ñÈ¡½Å±¾ËùÔÚÎÄ¼ş¼Ğ×Ö·û´®
-Set fld=fso.GetFolder(Path) 'Í¨¹ıÂ·¾¶×Ö·û´®»ñÈ¡ÎÄ¼ş¼Ğ¶ÔÏó
+Path = fso.GetParentFolderName(WScript.ScriptFullName) 'è·å–è„šæœ¬æ‰€åœ¨æ–‡ä»¶å¤¹å­—ç¬¦ä¸²
+Set fld=fso.GetFolder(Path) 'é€šè¿‡è·¯å¾„å­—ç¬¦ä¸²è·å–æ–‡ä»¶å¤¹å¯¹è±¡
 
 Dim Sum,IsChooseDelete,ThisTime
 Dim LogFile
@@ -12,68 +12,71 @@ Set LogFile= fso.opentextFile("log.txt",8,true)
 Dim List
 Set List= fso.opentextFile("ConvertFileList.txt",2,true)
 
-Call LogOut("¿ªÊ¼±éÀúÎÄ¼ş") 
-Call TreatSubFolder(fld) 'µ÷ÓÃ¸Ã¹ı³Ì½øĞĞµİ¹é±éÀú¸ÃÎÄ¼ş¼Ğ¶ÔÏóÏÂµÄËùÓĞÎÄ¼ş¶ÔÏó¼°×ÓÎÄ¼ş¼Ğ¶ÔÏó
+Call LogOut("å¼€å§‹éå†æ–‡ä»¶") 
+Call TreatSubFolder(fld) 'è°ƒç”¨è¯¥è¿‡ç¨‹è¿›è¡Œé€’å½’éå†è¯¥æ–‡ä»¶å¤¹å¯¹è±¡ä¸‹çš„æ‰€æœ‰æ–‡ä»¶å¯¹è±¡åŠå­æ–‡ä»¶å¤¹å¯¹è±¡
 
 Sub LogOut(msg)
     ThisTime=Now
     LogFile.WriteLine(year(ThisTime) & "-" & Month(ThisTime) & "-" & day(ThisTime) & " " & Hour(ThisTime) & ":" & Minute(ThisTime) & ":" & Second(ThisTime) & ": " & msg)
 End Sub
 
-Sub TreatSubFolder(fld) 'fld ÊÇÎÄ¼ş¼Ğ¶ÔÏó
-    Dim File 'ÎÄ¼ş¶ÔÏó£¬¿É²»ÊÇÎÄ±¾Á÷¶ÔÏó
-    Dim ts 'ÎÄ±¾Á÷¶ÔÏó
-    For Each File In fld.Files '±éÀú¸ÃÎÄ¼ş¼Ğ¶ÔÏóÏÂµÄËùÓĞÎÄ¼ş¶ÔÏó
+Sub TreatSubFolder(fld) 
+    Dim File
+    Dim ts
+    For Each File In fld.Files 'éå†è¯¥æ–‡ä»¶å¤¹å¯¹è±¡ä¸‹çš„æ‰€æœ‰æ–‡ä»¶å¯¹è±¡
         If fso.GetExtensionName(File) ="doc" or fso.GetExtensionName(File)="docx" Then
             List.WriteLine(File.Path)
             Sum = Sum + 1
         End If
     Next
     Dim subfld
-    For Each subfld In fld.SubFolders 'µİ¹é±éÀú×ÓÎÄ¼ş¼Ğ¶ÔÏó
+    For Each subfld In fld.SubFolders 'é€’å½’éå†å­æ–‡ä»¶å¤¹å¯¹è±¡
         TreatSubFolder subfld
     Next
 End Sub
 List.close
 
-If MsgBox("ÎÄ¼ş±éÀúÒÑÍê³É£¬ÒÑÕÒµ½" & Sum & "¸öwordÎÄµµ£¬ÏêÏ¸ÁĞ±íÔÚ" & vbCrlf & "ConvertFileList.txt" & vbCrlf & "ÊÇ·ñ½«ÕâĞ©ÎÄµµ×ª»»ÎªPDF£¿", vbYesNo + vbInformation, "ÎÄµµ±éÀúÍê³É") = vbYes Then
-    If MsgBox("ÊÇ·ñÔÚ×ª»»Íê±ÏºóÉ¾³ıDOCÎÄµµ?", vbYesNo+vbInformation, "ÊÇ·ñÔÚ×ª»»Íê±ÏºóÉ¾³ıÔ´ÎÄµµ?") = vbYes Then
-        IsChooseDelete = MsgBox("ÇëÔÙ´ÎÈ·ÈÏ£¬ÊÇ·ñÔÚ×ª»»Íê±ÏºóÉ¾³ıDOCÎÄµµ?", vbYesNo + vbExclamation, "ÊÇ·ñÔÚ×ª»»Íê±ÏºóÉ¾³ıÔ´ÎÄµµ?")
+If MsgBox("æ–‡ä»¶éå†å·²å®Œæˆï¼Œå·²æ‰¾åˆ°" & Sum & "ä¸ªwordæ–‡æ¡£ï¼Œè¯¦ç»†åˆ—è¡¨åœ¨" & vbCrlf & "ConvertFileList.txt" & vbCrlf & "æ˜¯å¦å°†è¿™äº›æ–‡æ¡£è½¬æ¢ä¸ºPDFï¼Ÿ", vbYesNo + vbInformation, "æ–‡æ¡£éå†å®Œæˆ") = vbYes Then
+    If MsgBox("æ˜¯å¦åœ¨è½¬æ¢å®Œæ¯•ååˆ é™¤DOCæ–‡æ¡£?", vbYesNo+vbInformation, "æ˜¯å¦åœ¨è½¬æ¢å®Œæ¯•ååˆ é™¤æºæ–‡æ¡£?") = vbYes Then
+        IsChooseDelete = MsgBox("è¯·å†æ¬¡ç¡®è®¤ï¼Œæ˜¯å¦åœ¨è½¬æ¢å®Œæ¯•ååˆ é™¤DOCæ–‡æ¡£?", vbYesNo + vbExclamation, "æ˜¯å¦åœ¨è½¬æ¢å®Œæ¯•ååˆ é™¤æºæ–‡æ¡£?")
     End If
 else
-    Msgbox("ÒÑÈ¡Ïû×ª»»²Ù×÷")
+    Msgbox("å·²å–æ¶ˆè½¬æ¢æ“ä½œ")
     Wscript.Quit
 End If
-MsgBox "ÇëÔÚ¿ªÊ¼×ª»»Ç°ÍË³öËùÓĞWordÎÄµµ±ÜÃâÎÄµµÕ¼ÓÃ´íÎó·¢Éú", vbOKOnly + vbExclamation, "¾¯¸æ"
+MsgBox "è¯·åœ¨å¼€å§‹è½¬æ¢å‰é€€å‡ºæ‰€æœ‰Wordæ–‡æ¡£é¿å…æ–‡æ¡£å ç”¨é”™è¯¯å‘ç”Ÿ", vbOKOnly + vbExclamation, "è­¦å‘Š"
 
 
 Const wdFormatPDF = 17
-Set wdapp = CreateObject("Word.Application")'´´½¨Word¶ÔÏó
-wdapp.Visible=false 'ÉèÖÃÊÓÍ¼²»¿É¼û
+Set wdapp = CreateObject("Word.Application")'åˆ›å»ºWordå¯¹è±¡
+wdapp.Visible=false 'è®¾ç½®è§†å›¾ä¸å¯è§
 
 Dim Finished
 Set List= fso.opentextFile("ConvertFileList.txt",1,true)
 Do While List.AtEndOfLine <> True 
     FilePath=List.ReadLine
     Set objDoc = wdapp.Documents.Open(FilePath)
-    objDoc.SaveAs Left(FilePath,InstrRev(FilePath,".")) & "pdf", wdFormatPDF
-    LogOut("ÎÄµµ" & FilePath & "ÒÑ×ª»»Íê³É¡£(" & Finished & "/" & Sum & ")")
+    objDoc.SaveAs Left(FilePath,InstrRev(FilePath,".")) & "pdf", wdFormatPDF 'å¦å­˜ä¸ºPDFæ–‡æ¡£
+    LogOut("æ–‡æ¡£" & FilePath & "å·²è½¬æ¢å®Œæˆã€‚(" & Finished & "/" & Sum & ")")
     wdapp.ActiveDocument.Close  
     Finished = Finished + 1
     If IsChooseDelete = vbYes Then
         fso.deleteFile FilePath
-        LogOut("ÎÄ¼ş" & FilePath & "ÒÑ±»³É¹¦É¾³ı")
+        LogOut("æ–‡ä»¶" & FilePath & "å·²è¢«æˆåŠŸåˆ é™¤")
     End If
 loop
+'æ‰«å°¾å¤„ç†ï¼ŒConvertFileList.txtå’Œlog.txtè¦è‡ªåŠ¨åˆ é™¤çš„è¯·å»æ‰ä¸‹é¢ä¸¤è¡Œå¼€å¤´å•å¼•å·
+'fso.deleteFile "ConvertFileList.txt"
+'fso.deleteFile "log.txt"
 List.close
-LogOut("ÎÄµµ×ª»»ÒÑÍê³É")
+LogOut("æ–‡æ¡£è½¬æ¢å·²å®Œæˆ")
 LogFile.close 
 Set fso = nothing
 
 Dim Msg
-Msg = "ÒÑ³É¹¦×ª»»" & Finished & "¸öÎÄ¼ş"
+Msg = "å·²æˆåŠŸè½¬æ¢" & Finished & "ä¸ªæ–‡ä»¶"
 If IsChooseDelete = vbYes Then
-    Msg=Msg + "²¢³É¹¦É¾³ıÔ´ÎÄ¼ş"
+    Msg=Msg + "å¹¶æˆåŠŸåˆ é™¤æºæ–‡ä»¶"
 MsgBox Msg
 wdapp.Quit
 Wscript.Quit
