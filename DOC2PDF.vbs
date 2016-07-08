@@ -20,6 +20,7 @@ Sub LogOut(msg)
     LogFile.WriteLine(year(ThisTime) & "-" & Month(ThisTime) & "-" & day(ThisTime) & " " & Hour(ThisTime) & ":" & Minute(ThisTime) & ":" & Second(ThisTime) & ": " & msg)
 End Sub
 
+Sum = 0
 Sub TreatSubFolder(fld) 
     Dim File
     Dim ts
