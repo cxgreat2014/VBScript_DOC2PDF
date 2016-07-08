@@ -77,6 +77,7 @@ Dim Msg
 Msg = "已成功转换" & Finished & "个文件"
 If IsChooseDelete = vbYes Then
     Msg=Msg + "并成功删除源文件"
+End If
 MsgBox Msg
 wdapp.Quit
 Wscript.Quit
