@@ -3,7 +3,11 @@
 
 # 运行平台
 Windows Only
-<del>谁能写个Linux下的感激不尽（逃</del>
+
+# 依赖
+Office 2007或更高级版本
+开发环境：Win7X64 with Office 2010
+有任何BUG请开Issues或者在知乎留言联系我，thx
 
 # Install
 免安装，下载DOC2PDF.vbs到文档目录双击运行即可
