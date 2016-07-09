@@ -84,6 +84,9 @@ Do While List.AtEndOfLine <> True
         Set objDoc = WordApp.Documents.Open(FilePath)
         'WordApp.Visible=false '设置视图不可见（避免运行时因为各种问题导致的可见）
         '上面这行有问题，现在遇到大批量有啥宏定义的运行起来就是一闪一闪的，还不如没有
+        If WordApp.Visible = true Then
+            WordApp.ActiveDocument.ActiveWindow.WindowState = 2 'wdWindowStateMinimize
+        End If
         objDoc.SaveAs Left(FilePath,InstrRev(FilePath,".")) & "pdf", wdFormatPDF '另存为PDF文档
         LogOut("文档" & FilePath & "已转换完成。(" & Finished & "/" & Sum & ")")
         WordApp.ActiveDocument.Close  
