@@ -74,7 +74,7 @@ Do While List.AtEndOfLine <> True
     End If
 loop
 List.close
-
+MsgBox "现在开始转换，若是在运行过程中弹出Word窗口"&vbCrlf&"请直接最小化Word窗口，不要关闭!"&vbCrlf&"请直接最小化Word窗口，不要关闭!"&vbCrlf&"请直接最小化Word窗口，不要关闭!"&vbCrlf&"重要的事情说三遍！关闭会导致脚本退出", vbOKOnly + vbExclamation, "警告"
 Dim Finished
 Finished = 0
 Set List= fso.opentextFile("ConvertFileList.txt",1,true)
@@ -82,7 +82,8 @@ Do While List.AtEndOfLine <> True
     FilePath=List.ReadLine
     If Mid(FilePath,1,2) <> "~$" Then '不处理word临时文件
         Set objDoc = WordApp.Documents.Open(FilePath)
-        WordApp.Visible=false '设置视图不可见（避免运行时因为各种问题导致的可见）
+        'WordApp.Visible=false '设置视图不可见（避免运行时因为各种问题导致的可见）
+        '上面这行有问题，现在遇到大批量有啥宏定义的运行起来就是一闪一闪的，还不如没有
         objDoc.SaveAs Left(FilePath,InstrRev(FilePath,".")) & "pdf", wdFormatPDF '另存为PDF文档
         LogOut("文档" & FilePath & "已转换完成。(" & Finished & "/" & Sum & ")")
         WordApp.ActiveDocument.Close  
