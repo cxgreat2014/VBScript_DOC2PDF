@@ -47,19 +47,34 @@ else
 End If
 MsgBox "请在开始转换前退出所有Word文档避免文档占用错误发生", vbOKOnly + vbExclamation, "警告"
 
-
+'创建Word对象，兼容WPS
 Const wdFormatPDF = 17
-Set wdapp = CreateObject("Word.Application")'创建Word对象
-wdapp.Visible=false '设置视图不可见
+On Error Resume Next
+Set WordApp = CreateObject("Word.Application")
+' try to connect to wps
+If WordApp Is Nothing Then '兼容WPS
+    Set WordApp = CreateObject("WPS.Application")
+    If WordApp Is Nothing Then
+        Set WordApp = CreateObject("KWPS.Application")
+        If WordApp Is Nothing Then
+            MsgBox "本程序依赖office 2010及以上版本，兼容WPS，" & vbCrlf & "请在使用本程序前安装office word 或WPS,否则本程序无法使用", vbCritical + vbOKOnly, "无法转换"
+            WScript.Quit
+        End If
+    End If
+End If
+On Error Goto 0
+
+WordApp.Visible=false '设置视图不可见
 
 Dim Finished
+Finished = 0
 Set List= fso.opentextFile("ConvertFileList.txt",1,true)
 Do While List.AtEndOfLine <> True 
     FilePath=List.ReadLine
-    Set objDoc = wdapp.Documents.Open(FilePath)
+    Set objDoc = WordApp.Documents.Open(FilePath)
     objDoc.SaveAs Left(FilePath,InstrRev(FilePath,".")) & "pdf", wdFormatPDF '另存为PDF文档
     LogOut("文档" & FilePath & "已转换完成。(" & Finished & "/" & Sum & ")")
-    wdapp.ActiveDocument.Close  
+    WordApp.ActiveDocument.Close  
     Finished = Finished + 1
     If IsChooseDelete = vbYes Then
         fso.deleteFile FilePath
@@ -80,5 +95,5 @@ If IsChooseDelete = vbYes Then
     Msg=Msg + "并成功删除源文件"
 End If
 MsgBox Msg
-wdapp.Quit
+WordApp.Quit
 Wscript.Quit
