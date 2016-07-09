@@ -35,7 +35,9 @@ Sub TreatSubFolder(fld)
 End Sub
 List.close
 
-If MsgBox("文件遍历已完成，已找到" & Sum & "个word文档，详细列表在" & vbCrlf & "ConvertFileList.txt" & vbCrlf & "您可以修改这份列表以增删要转换的文档，是否将这些文档转换为PDF？", vbYesNo + vbInformation, "文档遍历完成") = vbYes Then
+Call LogOut("文件遍历已完成，已找到" & Sum & "个word文档")
+
+If MsgBox("文件遍历已完成，已找到" & Sum & "个word文档，详细列表在" & vbCrlf & fso.GetFolder(Path).Path & "\ConvertFileList.txt" & vbCrlf & "您可以自行修改列表以增删要转换的文档" & vbCrlf & vbCrlf & "是否将这些文档转换为PDF格式？", vbYesNo + vbInformation, "文档遍历完成") = vbYes Then
     If MsgBox("是否在转换完毕后删除DOC文档?", vbYesNo+vbInformation, "是否在转换完毕后删除源文档?") = vbYes Then
         IsChooseDelete = MsgBox("请再次确认，是否在转换完毕后删除DOC文档?", vbYesNo + vbExclamation, "是否在转换完毕后删除源文档?")
     End If
@@ -103,13 +105,13 @@ loop
 List.close
 LogOut("文档转换已完成")
 LogFile.close 
-Set fso = nothing
 
 Dim Msg
 Msg = "已成功转换" & Finished & "个文件"
 If IsChooseDelete = vbYes Then
     Msg=Msg + "并成功删除源文件"
 End If
-MsgBox Msg
+MsgBox Msg & vbCrlf & "日志文件在" & fso.GetFolder(Path).Path & "\log.txt"
+Set fso = nothing
 WordApp.Quit
 Wscript.Quit
