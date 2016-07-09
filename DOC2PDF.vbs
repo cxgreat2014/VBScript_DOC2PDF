@@ -1,11 +1,10 @@
-Dim fso
+Dim fso,fld,Path
 Set fso = WScript.CreateObject("Scripting.Filesystemobject")
-Dim fld ' as object
-dim Path ' As string
 Path = fso.GetParentFolderName(WScript.ScriptFullName) '获取脚本所在文件夹字符串
 Set fld=fso.GetFolder(Path) '通过路径字符串获取文件夹对象
 
 Dim Sum,IsChooseDelete,ThisTime
+Sum = 0
 Dim LogFile
 Set LogFile= fso.opentextFile("log.txt",8,true)
 
@@ -20,12 +19,11 @@ Sub LogOut(msg)
     LogFile.WriteLine(year(ThisTime) & "-" & Month(ThisTime) & "-" & day(ThisTime) & " " & Hour(ThisTime) & ":" & Minute(ThisTime) & ":" & Second(ThisTime) & ": " & msg)
 End Sub
 
-Sum = 0
 Sub TreatSubFolder(fld) 
     Dim File
     Dim ts
     For Each File In fld.Files '遍历该文件夹对象下的所有文件对象
-        If fso.GetExtensionName(File) ="doc" or fso.GetExtensionName(File)="docx" Then
+        If UCase(fso.GetExtensionName(File)) ="DOC" or UCase(fso.GetExtensionName(File)) ="DOCX" Then
             List.WriteLine(File.Path)
             Sum = Sum + 1
         End If
@@ -37,7 +35,7 @@ Sub TreatSubFolder(fld)
 End Sub
 List.close
 
-If MsgBox("文件遍历已完成，已找到" & Sum & "个word文档，详细列表在" & vbCrlf & "ConvertFileList.txt" & vbCrlf & "是否将这些文档转换为PDF？", vbYesNo + vbInformation, "文档遍历完成") = vbYes Then
+If MsgBox("文件遍历已完成，已找到" & Sum & "个word文档，详细列表在" & vbCrlf & "ConvertFileList.txt" & vbCrlf & "您可以修改这份列表以增删要转换的文档，是否将这些文档转换为PDF？", vbYesNo + vbInformation, "文档遍历完成") = vbYes Then
     If MsgBox("是否在转换完毕后删除DOC文档?", vbYesNo+vbInformation, "是否在转换完毕后删除源文档?") = vbYes Then
         IsChooseDelete = MsgBox("请再次确认，是否在转换完毕后删除DOC文档?", vbYesNo + vbExclamation, "是否在转换完毕后删除源文档?")
     End If
@@ -66,16 +64,30 @@ On Error Goto 0
 
 WordApp.Visible=false '设置视图不可见
 
+Sum = 0
+Dim FilePath,FileLine
+Set List= fso.opentextFile("ConvertFileList.txt",1,true)
+Do While List.AtEndOfLine <> True 
+    FileLine=List.ReadLine
+    If FileLine <> "" and Mid(FileLine,1,2) <> "~$" Then
+        Sum = Sum + 1 '获取用户修改后的文件列表行数
+    End If
+loop
+List.close
+
 Dim Finished
 Finished = 0
 Set List= fso.opentextFile("ConvertFileList.txt",1,true)
 Do While List.AtEndOfLine <> True 
     FilePath=List.ReadLine
-    Set objDoc = WordApp.Documents.Open(FilePath)
-    objDoc.SaveAs Left(FilePath,InstrRev(FilePath,".")) & "pdf", wdFormatPDF '另存为PDF文档
-    LogOut("文档" & FilePath & "已转换完成。(" & Finished & "/" & Sum & ")")
-    WordApp.ActiveDocument.Close  
-    Finished = Finished + 1
+    If Mid(FilePath,1,2) <> "~$" Then '不处理word临时文件
+        Set objDoc = WordApp.Documents.Open(FilePath)
+        WordApp.Visible=false '设置视图不可见（避免运行时因为各种问题导致的可见）
+        objDoc.SaveAs Left(FilePath,InstrRev(FilePath,".")) & "pdf", wdFormatPDF '另存为PDF文档
+        LogOut("文档" & FilePath & "已转换完成。(" & Finished & "/" & Sum & ")")
+        WordApp.ActiveDocument.Close  
+        Finished = Finished + 1
+    End If
     If IsChooseDelete = vbYes Then
         fso.deleteFile FilePath
         LogOut("文件" & FilePath & "已被成功删除")
