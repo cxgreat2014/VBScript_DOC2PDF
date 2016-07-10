@@ -5,7 +5,7 @@
 Windows Only
 
 # 依赖
-Office 2007或更高版本，兼容WPS<br />
+Office 2010或更高版本，兼容WPS<br />
 开发环境：Win7X64 with Office 2010<br />
 若有BUG请开Issues或者在知乎留言联系我，thx<br />
 
