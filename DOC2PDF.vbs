@@ -99,12 +99,13 @@ Do While List.AtEndOfLine <> True
         LogOut("文件" & FilePath & "已被成功删除")
     End If
 loop
-'扫尾处理，ConvertFileList.txt和log.txt要自动删除的请去掉下面两行开头单引号
-'fso.deleteFile "ConvertFileList.txt"
-'fso.deleteFile "log.txt"
+'扫尾处理开始
 List.close
 LogOut("文档转换已完成")
 LogFile.close 
+'ConvertFileList.txt和log.txt要自动删除的请去掉下面两行开头单引号
+'fso.deleteFile "ConvertFileList.txt"
+'fso.deleteFile "log.txt"
 
 Dim Msg
 Msg = "已成功转换" & Finished & "个文件"
